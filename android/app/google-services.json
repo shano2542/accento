@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1056101459143",
+    "project_id": "accento-3362b",
+    "storage_bucket": "accento-3362b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056101459143:android:ddfa55baeb2392444ecae2",
+        "android_client_info": {
+          "package_name": "com.accento.accento"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMz_BGMBefBhDdJupTFaUN9uxkOdJB0MI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
