@@ -51,6 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         setState(() {
           nameController.text = userData['name'] ?? "";
           emailController.text = userData['email'] ?? "";
+          passwordController.text = userData['password'] ?? "";
           loading = false;
         });
       }catch(e){
