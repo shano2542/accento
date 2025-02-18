@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../utilities/theme.dart';
 
-
+// ignore: must_be_immutable
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;

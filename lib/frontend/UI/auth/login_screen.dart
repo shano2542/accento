@@ -1,6 +1,5 @@
-
+import 'package:accento/frontend/UI/auth/home_screen.dart';
 import 'package:accento/frontend/UI/auth/signup_screen.dart';
-import 'package:accento/frontend/UI/auth/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -44,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
       email: emailController.text.toString(), 
       password: passwordController.text.toString(),
     ).then((value){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>SplashScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
       setState(() {
         loading = false;
       });
@@ -68,6 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: DecoratedBox(
           decoration: AppGradient.gradientBG,
           child: Center(

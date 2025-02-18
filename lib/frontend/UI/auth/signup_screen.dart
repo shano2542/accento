@@ -31,7 +31,7 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  void Register() async{
+  void _register() async{
     setState(() {
       loading = true;
     });
@@ -48,6 +48,7 @@ class _SignupScreenState extends State<SignupScreen> {
       await FirebaseFirestore.instance.collection('users').doc(uid).set({
         'name': nameController.text.toString(),
         'email': emailController.text.toString(),
+        'password': passwordController.text.toString(),
         'uid': uid,
       });
 
@@ -72,6 +73,7 @@ class _SignupScreenState extends State<SignupScreen> {
     double logoHeight = screenHeight * 0.38;
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: DecoratedBox(
           decoration: AppGradient.gradientBG,
           child: Center(
@@ -144,7 +146,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     onPressed: () {
                       if(_formKey.currentState!.validate()){
 
-                        Register();
+                        _register();
                         // Navigator.push(context,MaterialPageRoute(builder: (context) => const LoginScreen()),);
                       }
                     },

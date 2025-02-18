@@ -26,6 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmpasswordController = TextEditingController();
 
   // Loading
   bool loading = false;
@@ -71,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _updateProfile() async{
     if(_formKey.currentState!.validate()){
       setState(() {
-        loading: false;
+        loading: true;
       });
 
       User? user = _auth.currentUser;
@@ -80,11 +81,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           await _firestore.collection('users').doc(user.uid).update({
             'name': nameController.text.toString(),
             'email': emailController.text.toString(),
+            'password': passwordController.text.toString(),
           });
           setState(() {
             loading: false;
           });
-          ToastMessage().toastMessage("Succeddfully updated!");
+          ToastMessage().toastMessage("Successfully updated!");
         }catch (e){
           ToastMessage().toastMessage(e.toString());
           setState(() {
@@ -97,9 +99,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     nameController.dispose();
     emailController.dispose();
+    confirmpasswordController.dispose();
     super.dispose();
   }
 
@@ -109,6 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     double logoWidth = screenWidth * 0.50;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       extendBody: true,
       // Ensures the gradient is visible behind the navbar
       bottomNavigationBar: CustomBottomNavBar(
@@ -170,8 +173,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 35),
                     Form(
+                      key: _formKey,
                       child: Column(
-                        key: _formKey,
                         children: [
                           CustomInputField(
                             labelText: 'Name',
@@ -214,26 +217,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           CustomInputField(
                             labelText: 'Confirm Password',
                             icon: Icons.remove_red_eye,
-                            controller: passwordController,
+                            controller: confirmpasswordController,
                             keyboardType: TextInputType.visiblePassword,
                             isPassword: true,
                             validator: (value) => value == null || value.isEmpty
                                 ? 'Please enter your password'
                                 : null,
                           ),
-                          const SizedBox(height: 25),
-                          CustomButton(
-                            text: 'Save',
-                            onPressed: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => const HomeScreen()),
-                              // );
-                            },
-                          ),
                         ],
                       )
+                    ),
+                    const SizedBox(height: 25),
+                    CustomButton(
+                      text: 'Save',
+                      onPressed: () {
+                        _updateProfile();
+                      },
                     ),
                   ],
                 ),
