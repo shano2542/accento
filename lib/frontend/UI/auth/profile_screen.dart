@@ -28,8 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmpasswordController =
-      TextEditingController();
+  final TextEditingController confirmpasswordController = TextEditingController();
 
   // Loading
   bool loading = false;
@@ -77,7 +76,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _updateProfile() async{
     if(_formKey.currentState!.validate()){
-
       // If a new password is provided, ensure that the password and confirm password match.
       if(passwordController.text.isNotEmpty && passwordController.text != confirmpasswordController.text){
         ToastMessage().toastMessage('Password do not match!');
@@ -91,6 +89,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       User? user = _auth.currentUser;
       if(user != null){
         try{
+          // Update Authentication Email if changed
+          if(emailController.text.trim() != user.email){
+            await user.verifyBeforeUpdateEmail(emailController.text.trim());
+          }
+
+          // Update Authentication Password if Provided.
+          if(passwordController.text.isNotEmpty){
+            await user.updatePassword(passwordController.text);
+          }
+
+          // Update Firestore data
           await _firestore.collection('users').doc(user.uid).update({
             'name': nameController.text.toString(),
             'email': emailController.text.toString(),
