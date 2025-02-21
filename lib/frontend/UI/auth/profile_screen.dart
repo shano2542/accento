@@ -28,27 +28,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmpasswordController = TextEditingController();
+  final TextEditingController confirmpasswordController =
+      TextEditingController();
 
   // Loading
   bool loading = false;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _fetchUserData();
   }
 
   // Fetch the user data from FireStore using the current user's UID
-  Future<void> _fetchUserData() async{
+  Future<void> _fetchUserData() async {
     setState(() {
       loading = true;
     });
 
     User? user = _auth.currentUser;
-    if(user != null){
-      try{
-        DocumentSnapshot userData = await _firestore.collection('users').doc(user.uid).get();
+    if (user != null) {
+      try {
+        DocumentSnapshot userData =
+            await _firestore.collection('users').doc(user.uid).get();
 
         setState(() {
           nameController.text = userData['name'] ?? "";
@@ -56,60 +58,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
           passwordController.text = userData['password'] ?? "";
           loading = false;
         });
-      }catch(e){
+      } catch (e) {
         ToastMessage().toastMessage("Something went wrong!");
         setState(() {
-          loading: false;
+          loading:
+          false;
         });
-      };
-    }else{
+      }
+    } else {
       setState(() {
-        loading: false;
+        loading:
+        false;
       });
     }
   }
-
 
   // Update the user data in Firestore and Firebase Authentication
 
   Future<void> _updateProfile() async{
     if(_formKey.currentState!.validate()){
+
       // If a new password is provided, ensure that the password and confirm password match.
       if(passwordController.text.isNotEmpty && passwordController.text != confirmpasswordController.text){
         ToastMessage().toastMessage('Password do not match!');
         return;
       }
       setState(() {
-        loading: true;
+        loading:
+        true;
       });
 
       User? user = _auth.currentUser;
       if(user != null){
         try{
-          // Update Authentication Email if changed.
-          if(emailController.text.trim() != user.email){
-            await user.verifyBeforeUpdateEmail(emailController.text.trim());
-          }
-
-          // Update Authentication Password if provided.
-          if(passwordController.text.isNotEmpty){
-            await user.updatePassword(passwordController.text);
-          }
-
-          // Update FireStore data.
           await _firestore.collection('users').doc(user.uid).update({
             'name': nameController.text.toString(),
             'email': emailController.text.toString(),
             'password': passwordController.text.toString(),
           });
           setState(() {
-            loading: false;
+            loading:
+            false;
           });
           ToastMessage().toastMessage("Successfully updated!");
-        }catch (e){
+        } catch (e) {
           ToastMessage().toastMessage(e.toString());
           setState(() {
-            loading: false;
+            loading:
+            false;
           });
         }
       }
@@ -126,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-     double screenWidth = MediaQuery.of(context).size.width;
+    double screenWidth = MediaQuery.of(context).size.width;
     double logoWidth = screenWidth * 0.50;
 
     return Scaffold(
@@ -192,60 +188,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 35),
                     Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          CustomInputField(
-                            labelText: 'Name',
-                            icon: Icons.account_circle,
-                            controller: nameController,
-                            keyboardType: TextInputType.name,
-                            validator: (value) => value == null || value.isEmpty
-                                ? 'Please enter your name'
-                                : null,
-                          ),
-                          const SizedBox(height: 15),
-                          CustomInputField(
-                            labelText: 'Email',
-                            icon: Icons.email,
-                            controller: emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              } else if (!RegExp(
-                                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$')
-                                  .hasMatch(value)) {
-                                return 'Please enter a valid email';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 15),
-                          CustomInputField(
-                            labelText: 'Password',
-                            icon: Icons.remove_red_eye,
-                            controller: passwordController,
-                            keyboardType: TextInputType.visiblePassword,
-                            isPassword: true,
-                            validator: (value) => value == null || value.isEmpty
-                                ? 'Please enter your password'
-                                : null,
-                          ),
-                          const SizedBox(height: 15),
-                          CustomInputField(
-                            labelText: 'Confirm Password',
-                            icon: Icons.remove_red_eye,
-                            controller: confirmpasswordController,
-                            keyboardType: TextInputType.visiblePassword,
-                            isPassword: true,
-                            validator: (value) => value == null || value.isEmpty
-                                ? 'Please enter your password'
-                                : null,
-                          ),
-                        ],
-                      )
-                    ),
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            CustomInputField(
+                              labelText: 'Name',
+                              icon: Icons.account_circle,
+                              controller: nameController,
+                              keyboardType: TextInputType.name,
+                              validator: (value) =>
+                                  value == null || value.isEmpty
+                                      ? 'Please enter your name'
+                                      : null,
+                            ),
+                            const SizedBox(height: 15),
+                            CustomInputField(
+                              labelText: 'Email',
+                              icon: Icons.email,
+                              controller: emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email';
+                                } else if (!RegExp(
+                                        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$')
+                                    .hasMatch(value)) {
+                                  return 'Please enter a valid email';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 15),
+                            CustomInputField(
+                              labelText: 'Password',
+                              icon: Icons.remove_red_eye,
+                              controller: passwordController,
+                              keyboardType: TextInputType.visiblePassword,
+                              isPassword: true,
+                              validator: (value) =>
+                                  value == null || value.isEmpty
+                                      ? 'Please enter your password'
+                                      : null,
+                            ),
+                            const SizedBox(height: 15),
+                            CustomInputField(
+                              labelText: 'Confirm Password',
+                              icon: Icons.remove_red_eye,
+                              controller: confirmpasswordController,
+                              keyboardType: TextInputType.visiblePassword,
+                              isPassword: true,
+                              validator: (value) =>
+                                  value == null || value.isEmpty
+                                      ? 'Please enter your password'
+                                      : null,
+                            ),
+                          ],
+                        )),
                     const SizedBox(height: 25),
                     CustomButton(
                       text: 'Save',
