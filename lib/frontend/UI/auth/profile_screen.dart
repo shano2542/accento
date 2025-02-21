@@ -1,4 +1,5 @@
 import 'package:accento/frontend/UI/auth/home_screen.dart';
+import 'package:accento/frontend/UI/auth/login_screen.dart';
 import 'package:accento/frontend/UI/auth/saved_voices_screen.dart';
 import 'package:accento/frontend/widgets/custom_bottom_navbar.dart';
 import 'package:accento/frontend/widgets/custom_button.dart';
@@ -66,8 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } else {
       setState(() {
-        loading:
-        false;
+        loading:false;
       });
     }
   }
@@ -121,6 +121,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  
+  // Logout  user
+  Future<void> _logout() async{
+    await _auth.signOut();
+    ToastMessage().toastMessage('Logged out successfully');
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> LoginScreen()));
+  }
+
   @override
   void dispose() {
     nameController.dispose();
@@ -136,6 +144,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+       // Logout button on the right Top-side
+       actions:[
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: _logout,
+        )
+       ]
+      ),
       extendBody: true,
       // Ensures the gradient is visible behind the navbar
       bottomNavigationBar: CustomBottomNavBar(
