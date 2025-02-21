@@ -93,14 +93,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (user != null) {
         try {
           // Update Authentication Email if changed
-          if (emailController.text.trim() != user.email) {
-            await user.updateEmail(emailController.text.trim());
-          }
+          // if (emailController.text.trim() != user.email) {
+          //   await user.updateEmail(emailController.text.trim());
+          // }
 
-          // Update Authentication Password if Provided.
-          if (passwordController.text.isNotEmpty) {
-            await user.updatePassword(passwordController.text);
-          }
+          // // Update Authentication Password if Provided.
+          // if (passwordController.text.isNotEmpty) {
+          //   await user.updatePassword(passwordController.text);
+          // }
 
           // Update Firestore data
           await _firestore.collection('users').doc(user.uid).update({
@@ -115,6 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ToastMessage().toastMessage("Successfully updated!");
         } catch (e) {
           ToastMessage().toastMessage(e.toString());
+          print(e.toString())
           setState(() {
             loading:
             false;
