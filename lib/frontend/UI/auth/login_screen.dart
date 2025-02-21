@@ -1,3 +1,4 @@
+import 'package:accento/frontend/UI/auth/forgot_password.dart';
 import 'package:accento/frontend/UI/auth/home_screen.dart';
 import 'package:accento/frontend/UI/auth/signup_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -181,11 +182,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Forgot Password
                   TextButton(
                     onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //       builder: (context) => const ForgotPasswordScreen()),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ForgotPasswordScreen()),
+                      );
                     },
                     child: const Text(
                       'Forgot Password?',

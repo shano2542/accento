@@ -1,5 +1,6 @@
 import 'package:accento/frontend/UI/auth/home_screen.dart';
 import 'package:accento/frontend/UI/auth/profile_screen.dart';
+import 'package:accento/frontend/UI/auth/record_new_voices_screen.dart';
 import 'package:accento/frontend/widgets/custom_bottom_navbar.dart';
 import 'package:accento/frontend/widgets/custom_button.dart';
 import 'package:accento/frontend/widgets/custom_voice_field.dart';
@@ -104,12 +105,12 @@ class _SavedVoicesState extends State<SavedVoices> {
                     CustomButton(
                       text: "Record Voice",
                       onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => const RecordNewVoice(),
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RecordNewVoice(),
+                          ),
+                        );
                       },
                     ),
                   ],

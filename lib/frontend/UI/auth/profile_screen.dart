@@ -121,7 +121,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  
   // Logout  user
   Future<void> _logout() async{
     await _auth.signOut();

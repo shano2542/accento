@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1056101459143",
+    "firebase_url": "https://accento-3362b-default-rtdb.firebaseio.com",
     "project_id": "accento-3362b",
     "storage_bucket": "accento-3362b.firebasestorage.app"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.accento.accento"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1056101459143-5t3en7jrv5bm9iiimsojp4dpmksop1sr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.accento.accento",
+            "certificate_hash": "400dd4d1b938fa3c5014ede27ba130e4e83bf5ba"
+          }
+        },
+        {
+          "client_id": "1056101459143-eb32mqnnkm2mmg43hlf20p26ftjgnr6m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBMz_BGMBefBhDdJupTFaUN9uxkOdJB0MI"
@@ -20,7 +34,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056101459143-eb32mqnnkm2mmg43hlf20p26ftjgnr6m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1056101459143-9pdkmgif8l2e2qadkcegci57fn8kcrsk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.accento.accento"
+              }
+            }
+          ]
         }
       }
     }
