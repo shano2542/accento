@@ -1,13 +1,10 @@
-buildscript {
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.3.0' // Keep Gradle 8.3
-    }
-}
-
 plugins {
-    id("com.google.gms.google-services") version "4.4.2" apply false
-}
+    // ...
 
+    // Add the dependency for the Google services Gradle plugin
+    id("com.google.gms.google-services") version "4.4.2" apply false
+
+}
 allprojects {
     repositories {
         google()
@@ -19,7 +16,6 @@ rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
-
 subprojects {
     project.evaluationDependsOn(":app")
 }
