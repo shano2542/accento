@@ -29,7 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmpasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
   // Loading
   bool loading = false;
@@ -77,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _updateProfile() async{
     if(_formKey.currentState!.validate()){
       // If a new password is provided, ensure that the password and confirm password match.
-      if(passwordController.text.isNotEmpty && passwordController.text != confirmpasswordController.text){
+      if(passwordController.text.isNotEmpty && passwordController.text != confirmPasswordController.text){
         ToastMessage().toastMessage('Password do not match!');
         return;
       }
@@ -133,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void dispose() {
     nameController.dispose();
     emailController.dispose();
-    confirmpasswordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -260,7 +260,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             CustomInputField(
                               labelText: 'Confirm Password',
                               icon: Icons.remove_red_eye,
-                              controller: confirmpasswordController,
+                              controller: confirmPasswordController,
                               keyboardType: TextInputType.visiblePassword,
                               isPassword: true,
                               validator: (value) =>
