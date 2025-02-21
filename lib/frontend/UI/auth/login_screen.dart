@@ -1,7 +1,10 @@
 import 'package:accento/frontend/UI/auth/home_screen.dart';
 import 'package:accento/frontend/UI/auth/signup_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 
 import '../../../utilities/theme.dart';
 import '../../../utilities/toast_message.dart';
@@ -26,13 +29,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     emailController.dispose();
     passwordController.dispose();
   }
 
-  // Login user
+  // Login/SignIn user with Email and Password
 
   void login(){
     setState(() {
@@ -53,6 +55,46 @@ class _LoginScreenState extends State<LoginScreen> {
         loading = false;
       });
     });
+  }
+
+  // Login/SignIn with Google
+
+  Future<void> signInWithGoogle() async{
+    try{
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if(googleUser == null){
+        ToastMessage().toastMessage('Google Sign-In canceled');
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      User? user = userCredential.user;
+
+      if(user != null){
+        // Check if the user exists in FireStore
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+
+        if(!userDoc.exists){
+          // Save user details in FireStore
+          await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+            'name': user.displayName,
+            'email': user.email,
+            'uid': user.uid,
+          });
+        }
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        ToastMessage().toastMessage('Login Successful');
+      }
+    }catch (e){
+      ToastMessage().toastMessage("e: ${e.toString()}");
+    }
   }
 
   
@@ -170,6 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       IconButton(
                         onPressed: () {
                           // Handle Google login logic
+                           signInWithGoogle();
                         },
                         icon: Image.asset(
                           'assets/images/Google.png',

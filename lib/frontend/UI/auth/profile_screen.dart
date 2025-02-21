@@ -1,3 +1,5 @@
+import 'package:accento/frontend/UI/auth/home_screen.dart';
+import 'package:accento/frontend/UI/auth/saved_voices_screen.dart';
 import 'package:accento/frontend/widgets/custom_bottom_navbar.dart';
 import 'package:accento/frontend/widgets/custom_button.dart';
 import 'package:accento/frontend/widgets/input_fields.dart';
@@ -68,10 +70,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
 
-  // Update the user data in Firestore
+  // Update the user data in Firestore and Firebase Authentication
 
   Future<void> _updateProfile() async{
     if(_formKey.currentState!.validate()){
+      // If a new password is provided, ensure that the password and confirm password match.
+      if(passwordController.text.isNotEmpty && passwordController.text != confirmpasswordController.text){
+        ToastMessage().toastMessage('Password do not match!');
+        return;
+      }
       setState(() {
         loading: true;
       });
@@ -79,6 +86,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       User? user = _auth.currentUser;
       if(user != null){
         try{
+          // Update Authentication Email if changed.
+          if(emailController.text.trim() != user.email){
+            await user.verifyBeforeUpdateEmail(emailController.text.trim());
+          }
+
+          // Update Authentication Password if provided.
+          if(passwordController.text.isNotEmpty){
+            await user.updatePassword(passwordController.text);
+          }
+
+          // Update FireStore data.
           await _firestore.collection('users').doc(user.uid).update({
             'name': nameController.text.toString(),
             'email': emailController.text.toString(),
@@ -117,12 +135,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Ensures the gradient is visible behind the navbar
       bottomNavigationBar: CustomBottomNavBar(
         onListPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => const SavedVoices(),
-          //   ),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SavedVoices(),
+            ),
+          );
         },
         onProfilePressed: () {
           Navigator.push(
@@ -133,22 +151,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         },
         onMicPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => const HomeScreen(),
-          //   ),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomeScreen(),
+            ),
+          );
         },
       ),
       floatingActionButton: CustomFAB(
         onPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => const HomeScreen(),
-          //   ),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomeScreen(),
+            ),
+          );
         },
         icon: Icons.mic,
       ),
@@ -231,6 +249,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 25),
                     CustomButton(
                       text: 'Save',
+                      loading: loading,
                       onPressed: () {
                         _updateProfile();
                       },

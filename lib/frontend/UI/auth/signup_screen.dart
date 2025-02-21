@@ -55,6 +55,8 @@ class _SignupScreenState extends State<SignupScreen> {
       setState(() {
         loading = false;
       });
+      // Navigate to Login Screen
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> LoginScreen()));
     }catch(error){
       ToastMessage().toastMessage(error.toString());
       setState(() {
@@ -145,7 +147,6 @@ class _SignupScreenState extends State<SignupScreen> {
                     loading: loading,
                     onPressed: () {
                       if(_formKey.currentState!.validate()){
-
                         _register();
                         // Navigator.push(context,MaterialPageRoute(builder: (context) => const LoginScreen()),);
                       }
@@ -154,10 +155,10 @@ class _SignupScreenState extends State<SignupScreen> {
 
                   const SizedBox(height: 100),
 
-                  // Register Link
+                  // Login Link
                   TextButton(
                     onPressed: () {
-                      // Handle registration logic
+                      // Handle Login logic
                       Navigator.push(
                         context,
                         MaterialPageRoute(
