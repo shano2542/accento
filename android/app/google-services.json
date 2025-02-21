@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "1056101459143-5t3en7jrv5bm9iiimsojp4dpmksop1sr.apps.googleusercontent.com",
+          "client_id": "1056101459143-as5ok0s6nco99062rshl4a0itd0qf55k.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.accento.accento",
-            "certificate_hash": "400dd4d1b938fa3c5014ede27ba130e4e83bf5ba"
+            "certificate_hash": "ea38061684f9f910918a7ff9a5dc645e2c51eb02"
           }
         },
         {
