@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:accento/frontend/UI/auth/profile_screen.dart';
 import 'package:accento/frontend/UI/auth/saved_voices_screen.dart';
 import 'package:accento/frontend/widgets/custom_bottom_navbar.dart';
 import 'package:accento/utilities/theme.dart';
+import 'package:accento/utilities/toast_message.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,6 +16,72 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Timer for email verification
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkEmailVerification();
+    // Optionally, re-check preiodically if needed.
+    _timer = Timer.periodic(const Duration(seconds: 10),(_)=> _checkEmailVerification());
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  // Check Email Verification
+  Future<void> _checkEmailVerification() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if(user != null){
+      await user.reload();  // get latest user info
+      if(!user.emailVerified){
+        _showEmailVerificationDialog();
+      }
+    }
+  }
+
+  // Show Email Verification Dialog
+
+  void _showEmailVerificationDialog(){
+    // prevent multiple dialogs
+    if(ModalRoute.of(context)?.isCurrent != true) return;
+
+    showDialog(
+      context: context, 
+      barrierDismissible: false, // User must interact with the dialog
+      builder: (context) => AlertDialog(
+        title: const Text("Email Verification Required"),
+        content: const Text(
+          "Your email is not verified. Please check your inbox and verify you email. If you haven't received an email, you can resend the verification email."
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              try{
+                await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+                ToastMessage().toastMessage('Verification email sent!');
+              }catch (e){
+                ToastMessage().toastMessage("e: ${e.toString()}");
+              }
+            }, 
+            child: const Text("Resend")
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              Future.delayed(const Duration(seconds: 5), _checkEmailVerification);
+            }, 
+            child: const Text("Dismiss"),
+          ),
+        ],
+      )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 

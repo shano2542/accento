@@ -29,11 +29,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
-  // Loading
+  // Loading state
   bool loading = false;
+
+  // Toggle visibility for password fields
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void initState() {
@@ -41,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _fetchUserData();
   }
 
-  // Fetch the user data from FireStore using the current user's UID
+  // Fetch the user data from Firestore using the current user's UID
   Future<void> _fetchUserData() async {
     setState(() {
       loading = true;
@@ -62,20 +65,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       } catch (e) {
         ToastMessage().toastMessage("Something went wrong!");
         setState(() {
-          loading:
-          false;
+          loading = false;
         });
       }
     } else {
       setState(() {
-        loading:
-        false;
+        loading = false;
       });
     }
   }
 
   // Update the user data in Firestore and Firebase Authentication
-
   Future<void> _updateProfile() async {
     if (_formKey.currentState!.validate()) {
       // If a new password is provided, ensure that the password and confirm password match.
@@ -85,8 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return;
       }
       setState(() {
-        loading:
-        true;
+        loading = true;
       });
 
       User? user = _auth.currentUser;
@@ -104,27 +103,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           // Update Firestore data
           await _firestore.collection('users').doc(user.uid).update({
-            'name': nameController.text.toString(),
-            'email': emailController.text.toString(),
-            'password': passwordController.text.toString(),
+            'name': nameController.text.trim(),
+            'email': emailController.text.trim(),
+            'password': passwordController.text.trim(),
           });
           setState(() {
-            loading:
-            false;
+            loading = false;
           });
           ToastMessage().toastMessage("Successfully updated!");
         } catch (e) {
           ToastMessage().toastMessage(e.toString());
           setState(() {
-            loading:
-            false;
+            loading = false;
           });
         }
       }
     }
   }
 
-  // Logout  user
+  // Logout user
   Future<void> _logout() async {
     await _auth.signOut();
     ToastMessage().toastMessage('Logged out successfully');
@@ -137,6 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     nameController.dispose();
     emailController.dispose();
     confirmPasswordController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -209,8 +207,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Stack(
         children: [
           Container(
-            decoration:
-                AppGradient.gradientBG, // Gradient applied to the entire screen
+            decoration: AppGradient.gradientBG, // Gradient applied to the entire screen
           ),
           SafeArea(
             child: Center(
@@ -235,10 +232,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               icon: Icons.account_circle,
                               controller: nameController,
                               keyboardType: TextInputType.name,
-                              validator: (value) =>
-                                  value == null || value.isEmpty
-                                      ? 'Please enter your name'
-                                      : null,
+                              validator: (value) => value == null || value.isEmpty
+                                  ? 'Please enter your name'
+                                  : null,
                             ),
                             const SizedBox(height: 15),
                             CustomInputField(
@@ -258,24 +254,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               },
                             ),
                             const SizedBox(height: 15),
+                            // Password field with toggle eye icon
                             CustomInputField(
                               labelText: 'Password',
-                              icon: Icons.remove_red_eye,
+                              icon: Icons.lock,
                               controller: passwordController,
                               keyboardType: TextInputType.visiblePassword,
-                              isPassword: true,
+                              isPassword: _obscurePassword,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                              ),
                               validator: (value) =>
                                   value == null || value.isEmpty
                                       ? 'Please enter your password'
                                       : null,
                             ),
                             const SizedBox(height: 15),
+                            // Confirm Password field with toggle eye icon
                             CustomInputField(
                               labelText: 'Confirm Password',
-                              icon: Icons.remove_red_eye,
+                              icon: Icons.lock,
                               controller: confirmPasswordController,
                               keyboardType: TextInputType.visiblePassword,
-                              isPassword: true,
+                              isPassword: _obscureConfirmPassword,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureConfirmPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureConfirmPassword =
+                                        !_obscureConfirmPassword;
+                                  });
+                                },
+                              ),
                               validator: (value) =>
                                   value == null || value.isEmpty
                                       ? 'Please enter your password'
@@ -287,9 +312,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     CustomButton(
                       text: 'Save',
                       loading: loading,
-                      onPressed: () {
-                        _updateProfile();
-                      },
+                      onPressed: _updateProfile,
                     ),
                   ],
                 ),
