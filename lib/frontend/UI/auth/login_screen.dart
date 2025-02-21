@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-
 import '../../../utilities/theme.dart';
 import '../../../utilities/toast_message.dart';
 import '../../widgets/custom_button.dart';
@@ -20,13 +19,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   bool loading = false;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final FirebaseAuth  _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void dispose() {
@@ -37,20 +35,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Login/SignIn user with Email and Password
 
-  void login(){
+  void login() {
     setState(() {
       loading = true;
     });
 
-    _auth.signInWithEmailAndPassword(
-      email: emailController.text.toString(), 
+    _auth
+        .signInWithEmailAndPassword(
+      email: emailController.text.toString(),
       password: passwordController.text.toString(),
-    ).then((value){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+    )
+        .then((value) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomeScreen()));
       setState(() {
         loading = false;
       });
-    }).onError((error,stackTrace){
+    }).onError((error, stackTrace) {
       ToastMessage().toastMessage(error.toString());
       setState(() {
         loading = false;
@@ -60,45 +61,53 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Login/SignIn with Google
 
-  Future<void> signInWithGoogle() async{
-    try{
+  Future<void> signInWithGoogle() async {
+    try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      if(googleUser == null){
+      if (googleUser == null) {
         ToastMessage().toastMessage('Google Sign-In canceled');
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
       User? user = userCredential.user;
 
-      if(user != null){
+      if (user != null) {
         // Check if the user exists in FireStore
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
 
-        if(!userDoc.exists){
+        if (!userDoc.exists) {
           // Save user details in FireStore
-          await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
             'name': user.displayName,
             'email': user.email,
             'uid': user.uid,
           });
         }
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HomeScreen()));
         ToastMessage().toastMessage('Login Successful');
       }
-    }catch (e){
+    } catch (e) {
       ToastMessage().toastMessage("e: ${e.toString()}");
     }
   }
 
-  
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -106,7 +115,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     double logoWidth = screenWidth * 0.85;
     double logoHeight = screenHeight * 0.38;
-
 
     return SafeArea(
       child: Scaffold(
@@ -129,10 +137,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 30),
 
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
+                  Form(
+                    key: _formKey,
+                    child: Column(children: [
                       // Email Input Field
                       CustomInputField(
                           labelText: 'Email',
@@ -162,9 +169,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? 'Please enter your password'
                             : null,
                       ),
-                    ]
+                    ]),
                   ),
-                ),  
                   const SizedBox(height: 25),
 
                   // Login Button
@@ -172,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     text: 'Login',
                     loading: loading,
                     onPressed: () {
-                      if(_formKey.currentState!.validate()){
+                      if (_formKey.currentState!.validate()) {
                         login();
                       }
                       // Navigator.push(context,MaterialPageRoute(builder: (context) => const HomeScreen()),);
@@ -213,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       IconButton(
                         onPressed: () {
                           // Handle Google login logic
-                           signInWithGoogle();
+                          signInWithGoogle();
                         },
                         icon: Image.asset(
                           'assets/images/Google.png',
