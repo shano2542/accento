@@ -29,7 +29,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   // Loading
   bool loading = false;
@@ -67,17 +68,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } else {
       setState(() {
-        loading:false;
+        loading:
+        false;
       });
     }
   }
 
   // Update the user data in Firestore and Firebase Authentication
 
-  Future<void> _updateProfile() async{
-    if(_formKey.currentState!.validate()){
+  Future<void> _updateProfile() async {
+    if (_formKey.currentState!.validate()) {
       // If a new password is provided, ensure that the password and confirm password match.
-      if(passwordController.text.isNotEmpty && passwordController.text != confirmPasswordController.text){
+      if (passwordController.text.isNotEmpty &&
+          passwordController.text != confirmPasswordController.text) {
         ToastMessage().toastMessage('Password do not match!');
         return;
       }
@@ -87,15 +90,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
 
       User? user = _auth.currentUser;
-      if(user != null){
-        try{
+      if (user != null) {
+        try {
           // Update Authentication Email if changed
-          if(emailController.text.trim() != user.email){
-            await user.verifyBeforeUpdateEmail(emailController.text.trim());
+          if (emailController.text.trim() != user.email) {
+            await user.updateEmail(emailController.text.trim());
           }
 
           // Update Authentication Password if Provided.
-          if(passwordController.text.isNotEmpty){
+          if (passwordController.text.isNotEmpty) {
             await user.updatePassword(passwordController.text);
           }
 
@@ -121,12 +124,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  
   // Logout  user
-  Future<void> _logout() async{
+  Future<void> _logout() async {
     await _auth.signOut();
     ToastMessage().toastMessage('Logged out successfully');
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> LoginScreen()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => LoginScreen()));
   }
 
   @override
@@ -144,16 +147,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-       // Logout button on the right Top-side
-       actions:[
-        IconButton(
-          icon: const Icon(Icons.logout),
-          onPressed: _logout,
-        )
-       ]
-      ),
       extendBody: true,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 74,
+        automaticallyImplyLeading: false,
+        // Logout button on the right Top-side
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10, top: 20),
+            child: IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: _logout,
+              color: AppTheme.navBgColor,
+              iconSize: 34,
+            ),
+          ),
+        ],
+      ),
       // Ensures the gradient is visible behind the navbar
       bottomNavigationBar: CustomBottomNavBar(
         onListPressed: () {
