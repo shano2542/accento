@@ -1,7 +1,7 @@
+import 'package:accento/utilities/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../../utilities/theme.dart';
-
 
 class CustomInputField extends StatelessWidget {
   final String labelText;
@@ -10,7 +10,8 @@ class CustomInputField extends StatelessWidget {
   final bool isPassword;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
- 
+  final VoidCallback? onIconPressed;
+  final bool? enabled;
 
   const CustomInputField({
     super.key,
@@ -19,29 +20,31 @@ class CustomInputField extends StatelessWidget {
     required this.icon,
     this.keyboardType = TextInputType.text,
     this.validator,
-    this.isPassword = false, 
-    IconButton? suffixIcon,
+    this.isPassword = false,
+    this.enabled,
+    this.onIconPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 323,
-      height: 60,
+      width: AppSizes.wp(323),
+      height: AppSizes.hp(60),
       child: TextFormField(
         controller: controller,
         obscureText: isPassword,
         obscuringCharacter: "*",
         keyboardType: keyboardType,
+        enabled: enabled,
         validator: validator,
-        style: const TextStyle(
+        style: TextStyle(
           color: AppTheme.textColorLight, // Ensure text is the right color
-          fontSize: 16,
+          fontSize: AppSizes.sp(20).clamp(10, 36),
         ),
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: TextStyle(
-            fontSize: 14,
+            fontSize: AppSizes.sp(16).clamp(10, 34),
             // ignore: deprecated_member_use
             color: AppTheme.textColorLight.withOpacity(0.7),
           ),
@@ -49,11 +52,12 @@ class CustomInputField extends StatelessWidget {
           filled: true,
           fillColor: AppTheme.transparentColor, // Adjust this color as needed
           prefixIcon: null,
-          suffixIcon: Icon(
-            icon,
-            color: AppTheme.primaryColor, // Icon color
+          suffixIcon: IconButton(
+            icon: Icon(icon),
+            onPressed: onIconPressed, // Toggle function
           ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12), // Adjusted padding
+          contentPadding: const EdgeInsets.symmetric(
+              vertical: 18, horizontal: 12), // Adjusted padding
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(
@@ -71,7 +75,14 @@ class CustomInputField extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(
               color: Colors.red,
-              width: 2,
+              width: 0.0,
+            ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(
+              color: Colors.red,
+              width: 0.0,
             ),
           ),
         ),

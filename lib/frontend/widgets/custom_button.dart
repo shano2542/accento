@@ -1,3 +1,4 @@
+import 'package:accento/utilities/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../../utilities/theme.dart';
@@ -10,6 +11,8 @@ class CustomButton extends StatelessWidget {
   final Color textColor;
   final EdgeInsetsGeometry padding;
   bool loading;
+  final double? width;
+  final double? height;
 
   CustomButton({
     super.key,
@@ -19,21 +22,33 @@ class CustomButton extends StatelessWidget {
     this.textColor = AppTheme.textColorLight,
     this.padding = const EdgeInsets.symmetric(vertical: 12, horizontal: 80),
     this.loading = false,
+    this.width,
+    this.height,
   });
 
   @override
   Widget build(BuildContext context) {
-    return  InkWell(
+    return InkWell(
       onTap: onPressed,
       child: Container(
-        height: 60,
-        width: 220,
+        width: width ?? AppSizes.wp(220),
+        height: height ?? AppSizes.hp(60),
         decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(50)
+            color: backgroundColor, borderRadius: BorderRadius.circular(50)),
+        child: Center(
+          child: loading
+              ? CircularProgressIndicator(
+                  strokeWidth: 3,
+                  color: AppTheme.textColorLight,
+                )
+              : Text(
+                  text,
+                  style: TextStyle(
+                      fontSize: AppSizes.sp(20).clamp(10, 32),
+                      color: textColor,
+                      fontWeight: FontWeight.w700),
+                ),
         ),
-        child: Center(child: loading ? CircularProgressIndicator(strokeWidth: 3, color: AppTheme.textColorLight,): 
-        Text(text,style: TextStyle(color: textColor),),),
       ),
     );
   }

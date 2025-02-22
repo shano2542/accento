@@ -1,6 +1,7 @@
 import 'package:accento/frontend/UI/auth/forgot_password.dart';
 import 'package:accento/frontend/UI/auth/home_screen.dart';
 import 'package:accento/frontend/UI/auth/signup_screen.dart';
+import 'package:accento/utilities/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  bool _obscurePassword = true;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -63,6 +66,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> signInWithGoogle() async {
     try {
+      // Ensure the previous account is signed out
+      await GoogleSignIn().signOut();
+
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
@@ -99,6 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
             'uid': user.uid,
           });
         }
+
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomeScreen()));
         ToastMessage().toastMessage('Login Successful');
@@ -110,15 +117,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-
-    double logoWidth = screenWidth * 0.85;
-    double logoHeight = screenHeight * 0.38;
+    double logoWidth = AppSizes.wp(333);
+    double logoHeight = AppSizes.hp(199);
 
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         body: DecoratedBox(
           decoration: AppGradient.gradientBG,
           child: Center(
@@ -130,12 +134,37 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   // Logo with dynamic size
                   Image.asset(
-                    'assets/images/logo3.png',
+                    'assets/images/logo2.png',
                     width: logoWidth,
                     height: logoHeight,
                     fit: BoxFit.contain,
                   ),
-                  const SizedBox(height: 30),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Welcome!\n",
+                          style: TextStyle(
+                            fontSize: AppSizes.sp(24),
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.navBgColor,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "AI ACCENTO",
+                          style: TextStyle(
+                            fontSize: AppSizes.sp(24),
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.navBgColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 40),
 
                   Form(
                     key: _formKey,
@@ -160,14 +189,28 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 15),
                       // Password Input Field
                       CustomInputField(
-                        labelText: 'Password',
-                        icon: Icons.remove_red_eye,
+                        labelText: 'New Password',
+                        icon: _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                         controller: passwordController,
                         keyboardType: TextInputType.visiblePassword,
-                        isPassword: true,
-                        validator: (value) => value == null || value.isEmpty
-                            ? 'Please enter your password'
-                            : null,
+                        isPassword: _obscurePassword,
+                        onIconPressed: () {
+                          setState(
+                            () {
+                              _obscurePassword = !_obscurePassword;
+                            },
+                          );
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          } else if (value.length < 6) {
+                            return 'Password should be at least 6 characters long';
+                          }
+                          return null;
+                        },
                       ),
                     ]),
                   ),
@@ -228,7 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: AppSizes.wp(20)),
 
                   // Register Link
                   TextButton(

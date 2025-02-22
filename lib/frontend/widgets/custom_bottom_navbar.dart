@@ -1,3 +1,4 @@
+import 'package:accento/utilities/constants.dart';
 import 'package:accento/utilities/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -15,15 +16,10 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-
-    double navWidth = screenWidth * 0.60;
-    double navHeight = screenHeight * 0.10;
+    double navHeight = AppSizes.hp(60);
     return Container(
-      width: navWidth,
       height: navHeight,
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      margin: const EdgeInsets.fromLTRB(25, 0, 25, 20),
       decoration: BoxDecoration(
         color: AppTheme.navBgColor,
         borderRadius: BorderRadius.circular(20),
@@ -33,19 +29,19 @@ class CustomBottomNavBar extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.list_alt_outlined,
                 color: AppTheme.primaryColor,
-                size: 42,
+                size: AppSizes.wp(40),
               ),
               onPressed: onListPressed,
             ),
             const Spacer(),
             IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.account_circle,
                 color: AppTheme.primaryColor,
-                size: 42,
+                size: AppSizes.wp(40),
               ),
               onPressed: onProfilePressed,
             ),
@@ -71,7 +67,7 @@ class CustomFAB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Transform.scale(
-      scale: 1.5,
+      scale: 1.2,
       child: FloatingActionButton(
         onPressed: onPressed,
         elevation: 0,
@@ -80,11 +76,11 @@ class CustomFAB extends StatelessWidget {
         child: imagePath != null
             ? CustomImage(
                 imagePath: imagePath!,
-                size: 140, // Adjust size as needed
+                size: AppSizes.wp(120), // Adjust size as needed
               )
             : CustomIcon(
                 icon: icon!,
-                size: 140,
+                size: AppSizes.wp(120),
                 color: AppTheme.primaryColor,
               ),
       ),

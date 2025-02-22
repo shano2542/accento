@@ -1,3 +1,4 @@
+import 'package:accento/utilities/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,12 +16,14 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-
   bool loading = false;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  bool _obscurePassword = true;
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
@@ -31,13 +34,14 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  void _register() async{
+  void _register() async {
     setState(() {
       loading = true;
     });
-    try{
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: emailController.text.toString(), 
+    try {
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: emailController.text.toString(),
         password: passwordController.text.toString(),
       );
       // Get user ID
@@ -56,26 +60,23 @@ class _SignupScreenState extends State<SignupScreen> {
         loading = false;
       });
       // Navigate to Login Screen
-      Navigator.push(context, MaterialPageRoute(builder: (context)=> LoginScreen()));
-    }catch(error){
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+    } catch (error) {
       ToastMessage().toastMessage(error.toString());
       setState(() {
         loading = false;
       });
-
     }
-    
   }
+
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-
-    double logoWidth = screenWidth * 0.85;
-    double logoHeight = screenHeight * 0.38;
+    double logoWidth = AppSizes.wp(333);
+    double logoHeight = AppSizes.hp(199);
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         body: DecoratedBox(
           decoration: AppGradient.gradientBG,
           child: Center(
@@ -87,58 +88,77 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: [
                   // Logo with dynamic size
                   Image.asset(
-                    'assets/images/logo4.png',
+                    'assets/images/logo2.png',
                     width: logoWidth,
                     height: logoHeight,
                     fit: BoxFit.contain,
                   ),
-                  // const SizedBox(height: 5),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    CustomInputField(
-                      labelText: 'Name',
-                      icon: Icons.account_circle,
-                      controller: nameController,
-                      keyboardType: TextInputType.name,
-                      validator: (value) => value == null || value.isEmpty
-                          ? 'Please enter your name'
-                          : null,
-                    ),
-                    const SizedBox(height: 15),
-                    // Email Input Field
-                    CustomInputField(
-                        labelText: 'Email',
-                        icon: Icons.email,
-                        controller: emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your email';
-                          } else if (!RegExp(
-                                  r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$')
-                              .hasMatch(value)) {
-                            return 'Please enter a valid email';
-                          }
-                          return null;
-                        }),
-                    const SizedBox(height: 15),
 
-                    // Password Input Field
-                    CustomInputField(
-                      labelText: 'Password',
-                      icon: Icons.remove_red_eye,
-                      controller: passwordController,
-                      keyboardType: TextInputType.visiblePassword,
-                      isPassword: true,
-                      validator: (value) => value == null || value.isEmpty
-                          ? 'Please enter your password'
-                          : null,
-                    ),
-                  ]
-                )
-              ),
+                  Text(
+                    "Create Account",
+                    style: TextStyle(
+                        color: AppTheme.primaryColor,
+                        fontSize: AppSizes.sp(24),
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 40),
+                  Form(
+                      key: _formKey,
+                      child: Column(children: [
+                        CustomInputField(
+                          labelText: 'Name',
+                          icon: Icons.account_circle,
+                          controller: nameController,
+                          keyboardType: TextInputType.name,
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Please enter your name'
+                              : null,
+                        ),
+                        const SizedBox(height: 15),
+                        // Email Input Field
+                        CustomInputField(
+                            labelText: 'Email',
+                            icon: Icons.email,
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your email';
+                              } else if (!RegExp(
+                                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$')
+                                  .hasMatch(value)) {
+                                return 'Please enter a valid email';
+                              }
+                              return null;
+                            }),
+                        const SizedBox(height: 15),
+
+                        // Password Input Field
+                        CustomInputField(
+                          labelText: 'New Password',
+                          icon: _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          controller: passwordController,
+                          keyboardType: TextInputType.visiblePassword,
+                          isPassword: _obscurePassword,
+                          onIconPressed: () {
+                            setState(
+                              () {
+                                _obscurePassword = !_obscurePassword;
+                              },
+                            );
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            } else if (value.length < 6) {
+                              return 'Password should be at least 6 characters long';
+                            }
+                            return null;
+                          },
+                        ),
+                      ])),
                   const SizedBox(height: 25),
 
                   // Register Button
@@ -146,7 +166,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     text: 'Register',
                     loading: loading,
                     onPressed: () {
-                      if(_formKey.currentState!.validate()){
+                      if (_formKey.currentState!.validate()) {
                         _register();
                         // Navigator.push(context,MaterialPageRoute(builder: (context) => const LoginScreen()),);
                       }
