@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:accento/frontend/UI/auth/home_screen.dart';
 import 'package:accento/frontend/UI/auth/login_screen.dart';
 import 'package:accento/frontend/UI/auth/saved_voices_screen.dart';
@@ -10,6 +11,8 @@ import 'package:accento/utilities/toast_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -41,10 +44,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
+  // Profile Image
+  File? _imageFile;
+
   @override
   void initState() {
     super.initState();
     _fetchUserData();
+    _loadImage();
+  }
+
+  // Pick Image from phone storage
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      final File imageFile = File(pickedFile.path);
+      final savedImage = await _saveImage(imageFile);
+      setState(() {
+        _imageFile = savedImage;
+      });
+    }
+  }
+
+  Future<File> _saveImage(File image) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = '${directory.path}/profile_pic.png';
+    return image.copy(path);
+  }
+
+  Future<void> _loadImage() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final imagePath = '${directory.path}/profile_pic.png';
+    final imageFile = File(imagePath);
+    if (await imageFile.exists()) {
+      setState(() {
+        _imageFile = imageFile;
+      });
+    }
   }
 
   // Fetch the user data from Firestore using the current user's UID
@@ -122,7 +159,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           setState(() {
             loading = false;
           });
-          ToastMessage().toastMessage("Successfully updated!" , backgroundColor: Colors.green);
+          ToastMessage().toastMessage("Successfully updated!",
+              backgroundColor: Colors.green);
 
           await _auth.signOut();
           Navigator.pushReplacement(
@@ -143,7 +181,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Logout user
   Future<void> _logout() async {
     await _auth.signOut();
-    ToastMessage().toastMessage('Logged out successfully' , backgroundColor: Colors.green);
+    ToastMessage()
+        .toastMessage('Logged out successfully', backgroundColor: Colors.green);
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginScreen()));
   }
@@ -200,14 +239,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               builder: (context) => const ProfileScreen(),
             ),
           );
-        },onPressed: () {
+        },
+        onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => HomeScreen(),
             ),
           );
-        }, onMicPressed: () {  },
+        },
+        onMicPressed: () {},
       ),
       floatingActionButton: CustomFAB(
         onPressed: () {
@@ -241,10 +282,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        'assets/images/avtar.png',
-                        width: logoWidth,
-                        fit: BoxFit.contain,
+                      // Image.asset(
+                      //   'assets/images/avtar.png',
+                      //   width: logoWidth,
+                      //   fit: BoxFit.contain,
+                      // ),
+                      GestureDetector(
+                        onTap: _pickImage, // Tap to select an image
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage: _imageFile != null
+                              ? FileImage(_imageFile!)
+                              : const AssetImage('assets/images/avtar.png')
+                                  as ImageProvider,
+                        ),
                       ),
                       const SizedBox(height: 35),
                       Form(
