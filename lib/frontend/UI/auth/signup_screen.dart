@@ -59,6 +59,8 @@ class _SignupScreenState extends State<SignupScreen> {
       setState(() {
         loading = false;
       });
+      ToastMessage().toastMessage("Register Successfully!",
+          backgroundColor: Colors.green);
       // Navigate to Login Screen
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LoginScreen()));

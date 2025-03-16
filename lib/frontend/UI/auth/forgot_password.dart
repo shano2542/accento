@@ -29,7 +29,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         await _auth.sendPasswordResetEmail(
           email: emailController.text.toString(),
         );
-        ToastMessage().toastMessage("Password reset email sent!");
+        ToastMessage().toastMessage("Password reset email sent!", backgroundColor: Colors.green);
         Navigator.pop(context);
       } catch (error) {
         ToastMessage().toastMessage(error.toString());
@@ -71,37 +71,37 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const SizedBox(height: 30),
 
                   Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          // Email Input Field
-                          CustomInputField(
-                            labelText: 'Email',
-                            icon: Icons.email,
-                            controller: emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter your email";
-                              } else if (!RegExp(
-                                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$')
-                                  .hasMatch(value)) {
-                                return "Please enter a valid email";
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 25),
-                          // Forget Button
-                          CustomButton(
-                            text: 'Forget Password',
-                            onPressed: () {
-                              // Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()),);
-                              resetPassword();
-                            },
-                          ),
-                        ],
-                      ))
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        // Email Input Field
+                        CustomInputField(
+                          labelText: 'Email',
+                          icon: Icons.email,
+                          controller: emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter your email";
+                            } else if (!RegExp(
+                                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$')
+                                .hasMatch(value)) {
+                              return "Please enter a valid email";
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 25),
+                        // Forget Button
+                        CustomButton(
+                          text: 'Forget Password',
+                          onPressed: () {
+                            resetPassword();
+                          },
+                        ),
+                      ],
+                    )
+                  )
                 ],
               ),
             ),

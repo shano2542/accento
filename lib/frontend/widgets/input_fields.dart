@@ -39,12 +39,12 @@ class CustomInputField extends StatelessWidget {
         validator: validator,
         style: TextStyle(
           color: AppTheme.textColorLight, // Ensure text is the right color
-          fontSize: AppSizes.sp(20).clamp(10, 36),
+          fontSize: AppSizes.sp(16).clamp(10, 36),
         ),
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: TextStyle(
-            fontSize: AppSizes.sp(16).clamp(10, 34),
+            fontSize: AppSizes.sp(14).clamp(10, 34),
             // ignore: deprecated_member_use
             color: AppTheme.textColorLight.withOpacity(0.7),
           ),

@@ -6,7 +6,9 @@ import '../../utilities/theme.dart';
 // ignore: must_be_immutable
 class CustomButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
+  final Future<void> Function()? onTap;
+
   final Color backgroundColor;
   final Color textColor;
   final EdgeInsetsGeometry padding;
@@ -17,13 +19,13 @@ class CustomButton extends StatelessWidget {
   CustomButton({
     super.key,
     required this.text,
-    required this.onPressed,
+    this.onPressed,
     this.backgroundColor = AppTheme.primaryColor,
     this.textColor = AppTheme.textColorLight,
     this.padding = const EdgeInsets.symmetric(vertical: 12, horizontal: 80),
     this.loading = false,
     this.width,
-    this.height,
+    this.height, this.onTap,
   });
 
   @override

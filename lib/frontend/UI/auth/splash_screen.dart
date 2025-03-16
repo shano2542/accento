@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../utilities/theme.dart';
-import '../firebase_services/splash_services.dart';
+import '../services/splash_services.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,7 +14,6 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
-
 
   // Timer from splash_services
 

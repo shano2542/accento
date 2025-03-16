@@ -93,12 +93,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Update the user data in Firestore and Firebase Authentication
   Future<void> _updateProfile() async {
     if (_formKey.currentState!.validate()) {
-      // If a new password is provided, ensure that the password and confirm password match.
-      // if (passwordController.text.isNotEmpty &&
-      //     passwordController.text != confirmPasswordController.text) {
-      //   ToastMessage().toastMessage('Password do not match!');
-      //   return;
-      // }
       setState(() {
         loading = true;
       });
@@ -119,29 +113,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             await user.updatePassword(passwordController.text);
           }
 
-          // Re-authenticate user before updating email/password
-          // AuthCredential credential = EmailAuthProvider.credential(
-          //   email: user.email!,
-          //   password:
-          //       passwordController.text, // Replace with actual password input
-          // );
-          // await user.reauthenticateWithCredential(credential);
-
-          // // Update email if changed
-          // if (emailController.text.trim() != user.email) {
-          //   await user.updateEmail(emailController.text.trim());
-          //   await user.sendEmailVerification();
-          //   ToastMessage().toastMessage(
-          //       "Email updated. Verify your email before logging in again.");
-          // }
-
-          // // Update password if provided
-          // if (passwordController.text.isNotEmpty) {
-          //   await user.updatePassword(passwordController.text);
-          //   ToastMessage().toastMessage(
-          //       "Password updated. Login again for security reasons.");
-          // }
-
           // Update Firestore data
           await _firestore.collection('users').doc(user.uid).update({
             'name': nameController.text.trim(),
@@ -151,19 +122,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           setState(() {
             loading = false;
           });
-          ToastMessage().toastMessage("Successfully updated!");
+          ToastMessage().toastMessage("Successfully updated!" , backgroundColor: Colors.green);
 
           await _auth.signOut();
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => LoginScreen()));
-
-          // Log out if email or password was changed
-          // if (emailController.text.trim() != user.email ||
-          //     passwordController.text.isNotEmpty) {
-          //   await _auth.signOut();
-          //   Navigator.pushReplacement(context,
-          //       MaterialPageRoute(builder: (context) => LoginScreen()));
-          // }
         } catch (e) {
           ToastMessage().toastMessage(e.toString());
           print(e.toString());
@@ -180,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Logout user
   Future<void> _logout() async {
     await _auth.signOut();
-    ToastMessage().toastMessage('Logged out successfully');
+    ToastMessage().toastMessage('Logged out successfully' , backgroundColor: Colors.green);
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginScreen()));
   }
@@ -226,7 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const SavedVoices(),
+              builder: (context) => SavedVoices(),
             ),
           );
         },
@@ -237,22 +200,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
               builder: (context) => const ProfileScreen(),
             ),
           );
-        },
-        onMicPressed: () {
+        },onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const HomeScreen(),
+              builder: (context) => HomeScreen(),
             ),
           );
-        },
+        }, onMicPressed: () {  },
       ),
       floatingActionButton: CustomFAB(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const HomeScreen(),
+              builder: (context) => HomeScreen(),
             ),
           );
         },

@@ -11,7 +11,7 @@ class CustomBottomNavBar extends StatelessWidget {
     super.key,
     required this.onListPressed,
     required this.onProfilePressed,
-    required this.onMicPressed,
+    required this.onMicPressed, required Null Function() onPressed,
   });
 
   @override
@@ -67,7 +67,7 @@ class CustomFAB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Transform.scale(
-      scale: 1.2,
+      scale: 1.3,
       child: FloatingActionButton(
         onPressed: onPressed,
         elevation: 0,
@@ -134,7 +134,7 @@ class CustomImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double imageSize = size * 0.27;
+    double imageSize = size * 0.19;
 
     return Container(
       width: size,

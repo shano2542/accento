@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+
 class ToastMessage {
-  void toastMessage(String message){
+  void toastMessage(String message, {Color backgroundColor = Colors.red}) {
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
+      timeInSecForIosWeb: 2,
+      backgroundColor: backgroundColor, // Use the parameter here
       textColor: Colors.white,
-      fontSize: 16.9,
+      fontSize: 16.0,
     );
   }
 }

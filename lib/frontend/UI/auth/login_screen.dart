@@ -39,26 +39,34 @@ class _LoginScreenState extends State<LoginScreen> {
   // Login/SignIn user with Email and Password
 
   void login() {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     setState(() {
       loading = true;
     });
 
-    _auth
-        .signInWithEmailAndPassword(
-      email: emailController.text.toString(),
-      password: passwordController.text.toString(),
-    )
-        .then((value) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomeScreen()));
+    _auth.signInWithEmailAndPassword(
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+    ).then((value) {
       setState(() {
         loading = false;
       });
-    }).onError((error, stackTrace) {
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+      ToastMessage()
+          .toastMessage("Login Successfully!", backgroundColor: Colors.green);
+    }).catchError((error) {
+      setState(() {
+        loading = false;
+      });
+
       ToastMessage().toastMessage(error.toString());
-      setState(() {
-        loading = false;
-      });
     });
   }
 
@@ -76,15 +84,13 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
       User? user = userCredential.user;
 
       if (user != null) {
@@ -108,7 +114,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomeScreen()));
-        ToastMessage().toastMessage('Login Successful');
+        ToastMessage()
+            .toastMessage('Login Successfully!', backgroundColor: Colors.green);
       }
     } catch (e) {
       ToastMessage().toastMessage("e: ${e.toString()}");
@@ -224,7 +231,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (_formKey.currentState!.validate()) {
                         login();
                       }
-                      // Navigator.push(context,MaterialPageRoute(builder: (context) => const HomeScreen()),);
                     },
                   ),
 

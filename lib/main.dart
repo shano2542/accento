@@ -1,4 +1,5 @@
 import 'package:accento/frontend/UI/auth/splash_screen.dart';
+import 'package:accento/frontend/UI/helper/sqlite_helper.dart';
 import 'package:accento/utilities/constants.dart';
 import 'package:accento/utilities/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -6,8 +7,19 @@ import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await _initializeApp(); // Call the async initialization function
   runApp(const MyApp());
+}
+
+/// **Function to Initialize Firebase & SQLite**
+Future<void> _initializeApp() async {
+  try {
+    await Firebase.initializeApp(); // Initialize Firebase
+    await DatabaseHelper.instance.database; // Initialize SQLite
+    debugPrint("Initialization successful");
+  } catch (e) {
+    debugPrint("Initialization failed: $e");
+  }
 }
 
 class MyApp extends StatelessWidget {
